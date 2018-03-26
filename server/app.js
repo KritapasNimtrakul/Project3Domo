@@ -60,15 +60,15 @@ app.use(session({
   resave: true,
   saveUninitialized: true,
   cookie: {
-      httpOnly: true,
-  }
+    httpOnly: true,
+  },
 }));
 app.use(csrf());
-app.use((err,req,res,next) => {
-    if(err.code !== 'EBADCSRFTOKEN') return next(err);
-    
-    console.log('Missiong CSRF token');
-    return false;
+app.use((err, req, res, next) => {
+  if (err.code !== 'EBADCSRFTOKEN') return next(err);
+
+  console.log('Missiong CSRF token');
+  return false;
 });
 
 

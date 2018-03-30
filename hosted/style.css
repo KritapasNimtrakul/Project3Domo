@@ -50,7 +50,7 @@ nav:nth-child(1) {
 .domoForm {
     border: 2px solid #338acc;
     height: 35px;
-    width: 700px;
+    width: 900px;
     margin-top:0px;
     padding-top:10px;
     background-color: #55acee;
@@ -71,7 +71,7 @@ nav:nth-child(1) {
     float:left;
 }
 
-.makeDomoSubmit {
+.makeDomoSubmit, .delete{
     transition: background-color 0.4s ease;
     display: inline;
     width: 90px;
@@ -79,13 +79,14 @@ nav:nth-child(1) {
     border-radius: 2px;
     color: white;
     text-decoration: none;
+    margin-left: 50px;
 }
 
-.makeDomoSubmit:link, .makeDomoSubmit:visited, .makeDomoSubmit:hover, .makeDomoSubmit:active {
+.makeDomoSubmit:link, .makeDomoSubmit:visited, .makeDomoSubmit:hover, .makeDomoSubmit:active, .delete:link, .delete:visited, .delete:hover, .delete:active {
     color: white;
 }
 
-.makeDomoSubmit:hover {
+.makeDomoSubmit:hover, .delete:hover {
     transition: background-color 0.4s ease;
     background-color: #338acc;
 }
@@ -110,7 +111,7 @@ nav:nth-child(1) {
     font-size: 1.2em;
 }
 
-.formSubmit {
+.formSubmit, .delete {
     transition: background-color 0.4s ease;
     display: block;
     text-align: center;
@@ -126,11 +127,11 @@ nav:nth-child(1) {
     text-decoration: none;
 }
 
-.formSubmit:link, .formSubmit:visited, .formSubmit:hover, .formSubmit:active {
+.formSubmit:link, .formSubmit:visited, .formSubmit:hover, .formSubmit:active, .delete:link, .delete:visited, .delete:hover, .delete:active {
     color: white;
 }
 
-.formSubmit:hover {
+.formSubmit:hover, .delete:hover {
     transition: background-color 0.4s ease;
     background-color: #338acc;
 }
@@ -259,4 +260,10 @@ h3.domoAge {
 
 .domo:last-child {
     margin-bottom:10px;
+}
+.delete {
+        float:left;
+    text-align: left;
+    margin-left: 50px;
+    font-size: 1em;
 }

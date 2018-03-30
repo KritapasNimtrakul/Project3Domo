@@ -22,12 +22,25 @@ const DomoForm = (props) => {
         <input id='domoName' type='text' name='name' placeholder='Domo Name'/>
         <label htmlFor='age'>Age: </label>
         <input id='domoAge' type='text' name='age' placeholder='Domo Age' />
+        <label htmlFor='height'>Height: </label>
+        <input id='domoHeight' type='text' name='height' placeholder='Domo height' />
         <input type='hidden' name='_csrf' value={props.csrf} />
         <input className='makeDomoSubmit' type='submit' value='Make Domo' />
         
         </form>
         
     );
+};
+
+const deleteDomo = (e) => {
+    sendAjax('GET','/getToken',null, (result) => {
+    e.preventDefault();
+    sendAjax('POST', $('#deleteForm').attr('action'), $('#deleteForm').serialize()+result.csrfToken , function(){
+        loadDomosFromServer();
+    });
+    
+    });
+    return false;
 };
 
 const DomoList = function(props) {
@@ -45,8 +58,18 @@ const domoNodes = props.domos.map(function(domo) {
     <div key={domo._id} className='domo'>
             <img src='/assets/img/domoface.jpeg' alt='domo face' className='domoFace' />
             <h3 classNAme='domoName'>Name: {domo.name}</h3>
+            <h3 className='domoHeight'>Height: {domo.height}</h3>
             <h3 className='domoAge'>Age: {domo.age}</h3>
+            
+            <form id='deleteForm' onSubmit={deleteDomo} name='deleteForm' action='/deleteDomo' method='POST' className='deleteForm' >
+            <input type='hidden' name='id' value={domo._id} />
+                
+            <input type='hidden' name='_csrf' value={props.csrf} />
+            <input className='deleteFormSubmit' type='submit' value='Delete' />
+            
+            </form>
         </div>
+        
     );
 });
 

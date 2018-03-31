@@ -11,7 +11,7 @@ var handleDomo = function handleDomo(e) {
     }
 
     sendAjax('POST', $('#domoForm').attr('action'), $('#domoForm').serialize(), function () {
-        loadDomosFromServer();
+        loadDomosFromServer($('#domoForm')[0][3].value);
     });
     return false;
 };
@@ -44,12 +44,13 @@ var DomoForm = function DomoForm(props) {
 };
 
 var deleteDomo = function deleteDomo(e) {
-    sendAjax('GET', '/getToken', null, function (result) {
-        e.preventDefault();
-        sendAjax('POST', $('#deleteForm').attr('action'), $('#deleteForm').serialize() + result.csrfToken, function () {
-            loadDomosFromServer();
-        });
+    console.log($('#deleteForm')[0][1].value);
+    e.preventDefault();
+    sendAjax('POST', $('#deleteForm').attr('action'), $('#deleteForm').serialize(), function () {
+        console.log('hello');
+        loadDomosFromServer($('#deleteForm')[0][1].value);
     });
+
     return false;
 };
 
@@ -106,22 +107,23 @@ var DomoList = function DomoList(props) {
     );
 };
 
-var loadDomosFromServer = function loadDomosFromServer() {
+var loadDomosFromServer = function loadDomosFromServer(csrf) {
     sendAjax('GET', '/getDomos', null, function (data) {
-        ReactDOM.render(React.createElement(DomoList, { domos: data.domos }), document.querySelector('#domos'));
+        ReactDOM.render(React.createElement(DomoList, { csrf: csrf, domos: data.domos }), document.querySelector('#domos'));
     });
 };
 
 var setup = function setup(csrf) {
     ReactDOM.render(React.createElement(DomoForm, { csrf: csrf }), document.querySelector('#makeDomo'));
-    ReactDOM.render(React.createElement(DomoList, { domos: [] }), document.querySelector('#domos'));
+    ReactDOM.render(React.createElement(DomoList, { csrf: csrf, domos: [] }), document.querySelector('#domos'));
 
-    loadDomosFromServer();
+    loadDomosFromServer(csrf);
 };
 
 var getToken = function getToken() {
     sendAjax('GET', '/getToken', null, function (result) {
         setup(result.csrfToken);
+        console.log('setup' + result.csrfToken);
     });
 };
 

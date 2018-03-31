@@ -51,7 +51,7 @@ const getDomos = (request, response) => {
       console.log(err);
       return res.status(400).json({ error: 'An error occured' });
     }
-
+      console.log(docs);
     return res.json({ domos: docs });
   });
 };
@@ -60,8 +60,21 @@ const deleteDomos = (req, res) => {
   if (!req.body) {
     return res.status(400).json({ error: 'RAWR! IDK' });
   }
+    console.log(req.body.id);
 
-  Domo.DomoModel.removeDomo(req.session.account._id);
+  const domoPromise = Domo.DomoModel.removeDomo(req.body.id);
+    
+  domoPromise.then(() => res.json({ redirect: '/maker' }));
+
+  domoPromise.catch((err) => {
+    console.log(err);
+    if (err.code === 11000) {
+      return res.status(400).json({ error: 'Domo does not exists.' });
+    }
+
+    return res.status(400).json({ error: 'An error occured.' });
+  });
+  return domoPromise;
 };
 
 module.exports.makerPage = makerPage;

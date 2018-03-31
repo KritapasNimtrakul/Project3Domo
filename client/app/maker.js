@@ -9,7 +9,7 @@ const handleDomo = (e) => {
     }
     
     sendAjax('POST', $('#domoForm').attr('action'), $('#domoForm').serialize(), function(){
-        loadDomosFromServer();
+        loadDomosFromServer($('#domoForm')[0][3].value);
     });
     return false;
 };
@@ -33,13 +33,13 @@ const DomoForm = (props) => {
 };
 
 const deleteDomo = (e) => {
-    sendAjax('GET','/getToken',null, (result) => {
+    console.log($('#deleteForm')[0][1].value);
     e.preventDefault();
-    sendAjax('POST', $('#deleteForm').attr('action'), $('#deleteForm').serialize()+result.csrfToken , function(){
-        loadDomosFromServer();
+    sendAjax('POST', $('#deleteForm').attr('action'), $('#deleteForm').serialize() , function(){
+        console.log('hello');
+        loadDomosFromServer($('#deleteForm')[0][1].value);
     });
     
-    });
     return false;
 };
 
@@ -78,10 +78,10 @@ return (
 );
 };
 
-const loadDomosFromServer = () => {
+const loadDomosFromServer = (csrf) => {
     sendAjax('GET', '/getDomos', null, (data) => {
         ReactDOM.render(
-        <DomoList domos={data.domos} />, document.querySelector('#domos')
+        <DomoList csrf={csrf} domos={data.domos} />, document.querySelector('#domos')
         );
     });
 };
@@ -91,16 +91,17 @@ const setup = function(csrf) {
     <DomoForm csrf={csrf} />, document.querySelector('#makeDomo')
     );
     ReactDOM.render(
-    <DomoList domos={[]} />, document.querySelector('#domos')
+    <DomoList csrf={csrf} domos={[]} />, document.querySelector('#domos')
     );
     
-    loadDomosFromServer();
+    loadDomosFromServer(csrf);
 };
 
 
 const getToken = () => {
     sendAjax('GET','/getToken',null, (result) => {
         setup(result.csrfToken);
+        console.log('setup'+result.csrfToken);
     });
 };
 

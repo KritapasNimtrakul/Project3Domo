@@ -19,11 +19,11 @@ const DomoForm = (props) => {
     <form id='domoForm' onSubmit={handleDomo} name='domoForm' action='/maker' method='POST' className='domoForm' >
         
         <label htmlFor='name'>Name: </label>
-        <input id='domoName' type='text' name='name' placeholder='Domo Name'/>
-        <label htmlFor='age'>Age: </label>
-        <input id='domoAge' type='text' name='age' placeholder='Domo Age' />
-        <label htmlFor='height'>Height: </label>
-        <input id='domoHeight' type='text' name='height' placeholder='Domo height' />
+        <input id='domoName' type='text' name='name' placeholder='Name'/>
+        <label htmlFor='text'>Text: </label>
+        <input id='domoText' type='textarea' name='text' placeholder='Text' />
+        <label htmlFor='relate'>Relate: </label>
+        <input id='domoRelate' type='text' name='relate' placeholder='Relate' />
         <input type='hidden' name='_csrf' value={props.csrf} />
         <input className='makeDomoSubmit' type='submit' value='Make Domo' />
         
@@ -56,10 +56,9 @@ const DomoList = function(props) {
 const domoNodes = props.domos.map(function(domo) {
     return (
     <div key={domo._id} className='domo'>
-            <img src='/assets/img/domoface.jpeg' alt='domo face' className='domoFace' />
             <h3 classNAme='domoName'>Name: {domo.name}</h3>
-            <h3 className='domoHeight'>Height: {domo.height}</h3>
-            <h3 className='domoAge'>Age: {domo.age}</h3>
+            <h3 className='domoRelate'>Relate: {domo.relate}</h3>
+            <h3 className='domoText'>Text: {domo.text}</h3>
             
             <form id='deleteForm' onSubmit={deleteDomo} name='deleteForm' action='/deleteDomo' method='POST' className='deleteForm' >
             <input type='hidden' name='id' value={domo._id} />

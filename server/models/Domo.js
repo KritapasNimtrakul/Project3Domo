@@ -56,9 +56,8 @@ DomoSchema.statics.removeDomo = (dname, dtext, callback) => {
   return DomoModel.remove(search).exec(callback);
 };
 
-DomoSchema.statics.getAllCollection = (callback) => {
-  return DomoModel.find().select('name text relate').exec(callback);
-};
+DomoSchema.statics.getAllCollection = (callback) =>
+DomoModel.find().select('name text relate').exec(callback);
     /*
   const collections = mongoose.connections[0].collections;
   //console.log(collections);

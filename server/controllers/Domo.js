@@ -57,17 +57,16 @@ const getDomos = (request, response) => {
   });
 };
 const getAll = (request, response) => {
-  const req = request;
   const res = response;
 
-  return Domo.DomoModel.getAllCollection((err,docs) => {
-          if (err) {
+  return Domo.DomoModel.getAllCollection((err, docs) => {
+    if (err) {
       console.log(err);
       return res.status(400).json({ error: 'An error occured' });
     }
     console.log(docs);
     return res.json({ domos: docs });
-  })
+  });
 };
 
 const deleteDomos = (req, res) => {

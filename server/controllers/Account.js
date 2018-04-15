@@ -28,9 +28,44 @@ const login = (request, response) => {
     }
     req.session.account = Account.AccountModel.toAPI(account);
 
-    return res.json({ redirect: '/maker' });
+    return res.json({ redirect: '/explore' });
   });
 };
+
+const changePass = (request, response) => {
+  const req = request;
+  const res = response;
+    // console.log(req.session.account);
+
+
+  const username = req.session.account.username;
+  const password = `${req.body.pass}`;
+  const password2 = `${req.body.newPass}`;
+
+
+  if (!password2 || !password) {
+    return res.status(400).json({ error: 'RAWR! All fields are required' });
+  }
+
+
+  const accountPromise = Account.AccountModel.changeUserPassword(username, password, password2);
+
+  accountPromise.then(() => res.json({ redirect: '/explore' }));
+
+  accountPromise.catch((err) => {
+    console.log(err);
+    if (err || !req.session.account) {
+      return res.status(401).json({ error: 'Wrong username or password' });
+    }
+    if (err.code === 11000) {
+      return res.status(401).json({ error: 'Wrong username or password' });
+    }
+
+    return res.status(400).json({ error: 'An error occured.' });
+  });
+  return accountPromise;
+};
+
 
 const signup = (request, response) => {
   const req = request;
@@ -61,7 +96,7 @@ const signup = (request, response) => {
 
     savePromise.then(() => {
       req.session.account = Account.AccountModel.toAPI(newAccount);
-      res.json({ redirect: '/maker' });
+      res.json({ redirect: '/explore' });
     })
     ;
 
@@ -76,6 +111,7 @@ const signup = (request, response) => {
     });
   });
 };
+
 
 const getToken = (request, response) => {
   const req = request;
@@ -94,3 +130,4 @@ module.exports.login = login;
 module.exports.logout = logout;
 module.exports.signup = signup;
 module.exports.getToken = getToken;
+module.exports.changePass = changePass;

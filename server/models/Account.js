@@ -82,6 +82,33 @@ AccountModel.findByUsername(username, (err, doc) => {
   });
 });
 
+
+AccountSchema.statics.changeUserPassword = (username, password, password2, callback) =>
+AccountModel.findByUsername(username, (err, doc) => {
+  if (err) {
+    return callback(err);
+  }
+
+  if (!doc) {
+    return callback();
+  }
+
+
+  return validatePassword(doc, password, (result) => {
+    if (result === true) {
+      return crypto.pbkdf2(password2, doc.salt,
+                           iterations, keyLength, 'RSA-SHA512', (err1, hash) => {
+                             const search = {
+                               username,
+                             };
+                             AccountModel.update(search, { password: hash.toString('hex') })
+                                 .exec(callback);
+                           });
+    }
+    return result;
+  });
+});
+
 AccountModel = mongoose.model('Account', AccountSchema);
 
 module.exports.AccountModel = AccountModel;

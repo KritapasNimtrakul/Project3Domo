@@ -9,7 +9,7 @@ const makerPage = (req, res) => {
       return res.status(400).json({ error: 'An error occured' });
     }
 
-    return res.render('app', { csrfToken: req.csrfToken(), uDatas: docs });
+    return res.render('preview', { csrfToken: req.csrfToken(), uDatas: docs });
   });
 };
 
@@ -29,7 +29,7 @@ const makeuData = (req, res) => {
 
   const uDataPromise = newuData.save();
 
-  uDataPromise.then(() => res.json({ redirect: '/maker' }));
+  uDataPromise.then(() => res.json({ redirect: '/makerdata' }));
 
   uDataPromise.catch((err) => {
     console.log(err);
@@ -64,7 +64,7 @@ const deleteuDatas = (req, res) => {
 
   const uDataPromise = Data.uDataModel.removeuData(req.body.id);
 
-  uDataPromise.then(() => res.json({ redirect: '/maker' }));
+  uDataPromise.then(() => res.json({ redirect: '/makerdata' }));
 
   uDataPromise.catch((err) => {
     console.log(err);

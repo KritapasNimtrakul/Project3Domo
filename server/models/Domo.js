@@ -14,15 +14,15 @@ const DomoSchema = new mongoose.Schema({
     trim: true,
     set: setName,
   },
-  age: {
-    type: Number,
-    min: 0,
+  text: {
+    type: String,
     required: true,
+    trim: true,
   },
-  height: {
-    type: Number,
-    min: 0,
-    required: true,
+  relate: {
+    type: String,
+    required: false,
+    trim: true,
   },
   owner: {
     type: mongoose.Schema.ObjectId,
@@ -37,23 +37,43 @@ const DomoSchema = new mongoose.Schema({
 
 DomoSchema.statics.toAPI = (doc) => ({
   name: doc.name,
-  age: doc.age,
-  height: doc.height,
+  text: doc.text,
+  relate: doc.relate,
 });
 
 DomoSchema.statics.findByOwner = (ownerId, callback) => {
   const search = {
     owner: convertId(ownerId),
   };
-  return DomoModel.find(search).select('name age height').exec(callback);
+  return DomoModel.find(search).select('name text relate').exec(callback);
 };
 
-DomoSchema.statics.removeDomo = (id, callback) => {
+DomoSchema.statics.removeDomo = (dname, dtext, callback) => {
   const search = {
-    _id: id,
+    name: dname,
+    text: dtext,
   };
   return DomoModel.remove(search).exec(callback);
 };
+
+DomoSchema.statics.getAllCollection = (callback) => {
+  return DomoModel.find().select('name text relate').exec(callback);
+};
+    /*
+  const collections = mongoose.connections[0].collections;
+  //console.log(collections);
+  console.log(collections.accounts.collection.s.db);
+
+  const names = [];
+
+  Object.keys(collections).forEach((k) => {
+    names.push(k);
+  });
+
+  // console.log(names);
+  return names;
+  */
+
 
 DomoModel = mongoose.model('Domo', DomoSchema);
 

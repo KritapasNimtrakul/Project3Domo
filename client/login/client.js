@@ -1,23 +1,22 @@
 const handleLogin = (e) => {
   e.preventDefault();
 
-  $('#domoMessage').animate({ width: 'hide' }, 350);
-
   if ($('#user').val() == '' || $('#pass').val() == '') {
     handleError('RAWR! Username or password is empty');
     return false;
   }
-    
     console.log($("input[name=_csrf]").val());
     
     sendAjax('POST', $("#loginForm").attr("action"), $("#loginForm").serialize(), redirect);
     
     return false;
 };
+
+
+
+
 const handleSignup = (e) => {
   e.preventDefault();
-
-  $('#domoMessage').animate({ width: 'hide' }, 350);
 
   if ($('#user').val() == '' || $('#pass').val() == '' || $('#pass2').val() == '') {
     handleError('RAWR! All fields are required');
@@ -51,6 +50,9 @@ const LoginWindow = (props) => {
     );
 };
 
+
+
+
 const SignupWindow = (props) => {
     return(
     <form id="signupForm" name='signupForm' onSubmit={handleSignup} action='/signup' method='POST' className='mainForm'>
@@ -75,6 +77,7 @@ const createLoginWindow = (csrf) => {
     );
     
 };
+
 const createSignupWindow = (csrf) => {
     ReactDOM.render(
     <SignupWindow csrf={csrf} />,
@@ -85,6 +88,7 @@ const createSignupWindow = (csrf) => {
 
 const setup = (csrf) => {
     const loginButton = document.querySelector('#loginButton');
+
     const signupButton = document.querySelector('#signupButton');
     
     signupButton.addEventListener('click',(e) =>{
@@ -98,6 +102,7 @@ const setup = (csrf) => {
         createLoginWindow(csrf);
         return false;
     });
+
     
     createLoginWindow(csrf);
 };

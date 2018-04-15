@@ -3,23 +3,19 @@
 var handleLogin = function handleLogin(e) {
     e.preventDefault();
 
-    $('#domoMessage').animate({ width: 'hide' }, 350);
-
     if ($('#user').val() == '' || $('#pass').val() == '') {
         handleError('RAWR! Username or password is empty');
         return false;
     }
-
     console.log($("input[name=_csrf]").val());
 
     sendAjax('POST', $("#loginForm").attr("action"), $("#loginForm").serialize(), redirect);
 
     return false;
 };
+
 var handleSignup = function handleSignup(e) {
     e.preventDefault();
-
-    $('#domoMessage').animate({ width: 'hide' }, 350);
 
     if ($('#user').val() == '' || $('#pass').val() == '' || $('#pass2').val() == '') {
         handleError('RAWR! All fields are required');
@@ -88,12 +84,14 @@ var SignupWindow = function SignupWindow(props) {
 var createLoginWindow = function createLoginWindow(csrf) {
     ReactDOM.render(React.createElement(LoginWindow, { csrf: csrf }), document.querySelector('#content'));
 };
+
 var createSignupWindow = function createSignupWindow(csrf) {
     ReactDOM.render(React.createElement(SignupWindow, { csrf: csrf }), document.querySelector('#content'));
 };
 
 var setup = function setup(csrf) {
     var loginButton = document.querySelector('#loginButton');
+
     var signupButton = document.querySelector('#signupButton');
 
     signupButton.addEventListener('click', function (e) {
@@ -124,7 +122,7 @@ $(document).ready(function () {
 
 var handleError = function handleError(message) {
   $('#errorMessage').text(message);
-  $('#domoMessage').animate({ wodth: 'toggle' }, 350);
+  $('#domoMessage').animate({ width: 'toggle' }, 350);
 };
 
 var redirect = function redirect(response) {

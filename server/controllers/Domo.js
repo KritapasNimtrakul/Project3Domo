@@ -14,14 +14,15 @@ const makerPage = (req, res) => {
 };
 
 const makeDomo = (req, res) => {
-  if (!req.body.name || !req.body.age || !req.body.height) {
-    return res.status(400).json({ error: 'RAWR! Both name and age are required' });
+  if (!req.body.name || !req.body.text) {
+    return res.status(400).json({ error: 'All field require' });
   }
+  console.log(req.body);
 
   const domoData = {
     name: req.body.name,
-    age: req.body.age,
-    height: req.body.height,
+    text: req.body.text,
+    relate: req.body.relate,
     owner: req.session.account._id,
   };
 
@@ -29,7 +30,7 @@ const makeDomo = (req, res) => {
 
   const domoPromise = newDomo.save();
 
-  domoPromise.then(() => res.json({ redirect: '/maker' }));
+  domoPromise.then(() => res.json({ redirect: '/explore' }));
 
   domoPromise.catch((err) => {
     console.log(err);
@@ -37,7 +38,7 @@ const makeDomo = (req, res) => {
       return res.status(400).json({ error: 'Domo already exists.' });
     }
 
-    return res.status(400).json({ error: 'An error occured.' });
+    return res.status(400).json({ error: 'An error occured.1' });
   });
   return domoPromise;
 };
@@ -51,20 +52,33 @@ const getDomos = (request, response) => {
       console.log(err);
       return res.status(400).json({ error: 'An error occured' });
     }
-      console.log(docs);
+    console.log(docs);
     return res.json({ domos: docs });
   });
+};
+const getAll = (request, response) => {
+  const req = request;
+  const res = response;
+
+  return Domo.DomoModel.getAllCollection((err,docs) => {
+          if (err) {
+      console.log(err);
+      return res.status(400).json({ error: 'An error occured' });
+    }
+    console.log(docs);
+    return res.json({ domos: docs });
+  })
 };
 
 const deleteDomos = (req, res) => {
   if (!req.body) {
     return res.status(400).json({ error: 'RAWR! IDK' });
   }
-    console.log(req.body.id);
+  console.log(req.body.name, req.body.text);
 
-  const domoPromise = Domo.DomoModel.removeDomo(req.body.id);
-    
-  domoPromise.then(() => res.json({ redirect: '/maker' }));
+  const domoPromise = Domo.DomoModel.removeDomo(req.body.name, req.body.text);
+
+  domoPromise.then(() => res.json({ redirect: '/explore' }));
 
   domoPromise.catch((err) => {
     console.log(err);
@@ -81,3 +95,4 @@ module.exports.makerPage = makerPage;
 module.exports.getDomos = getDomos;
 module.exports.make = makeDomo;
 module.exports.deleteDomos = deleteDomos;
+module.exports.getAll = getAll;

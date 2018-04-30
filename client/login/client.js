@@ -1,3 +1,5 @@
+let getcsrfValue;
+
 const handleLogin = (e) => {
   e.preventDefault();
 
@@ -11,9 +13,6 @@ const handleLogin = (e) => {
     
     return false;
 };
-
-
-
 
 const handleSignup = (e) => {
   e.preventDefault();
@@ -33,6 +32,31 @@ const handleSignup = (e) => {
     return false;
 };
 
+const handleSearch = (e) => {
+  e.preventDefault();
+
+  if ($('#word').val() == '') {
+    handleError('All fields are required');
+    return false;
+  }
+    
+    sendAjax('POST', $("#searchForm").attr("action"), $("#searchForm").serialize(), (data) => {
+        console.log(data);
+        ReactDOM.render(
+        <SearchList csrf={getcsrfValue} search={data.domos} />, document.querySelector('#createContext')
+        );
+    });
+    
+    return false;
+};
+
+const ChangeContentWindow = (props) => {
+    return (
+        <div>
+        </div>
+    );
+};
+
 
 const LoginWindow = (props) => {
     return (
@@ -50,7 +74,40 @@ const LoginWindow = (props) => {
     );
 };
 
+const ExploreList = function(props) {
+    if(props.explores.length === 0) {
+        return (
+        <div className='domoList'>
+            <h3 className='emptyDomo'>No Article yet! Lets start your first one here</h3>
+            </div>
+        )
+    };
 
+    const domoNodes = props.explores.map(function(domo) {
+        let temp = domo.text.split(/\n/);
+        const line = temp.map(function(t) {
+            return(
+            <div>
+                <p className='domoText'>{t}</p>
+            </div>
+            );
+        });
+        return (
+        <div key={domo._id} className='domo'>
+                <img className='domoRelate' src={domo.relate} />
+                <div id='g1'>
+                <h3 classNAme='domoName'><b>{domo.name}</b></h3>
+                    {line}
+                </div>
+            </div>
+
+        );
+    });
+
+    return (
+    <div className='domoList'>{domoNodes}</div>
+    );
+    };
 
 
 const SignupWindow = (props) => {
@@ -70,26 +127,136 @@ const SignupWindow = (props) => {
     );
 };
 
+const SearchWindow = (props) => {
+    return(
+    <form id="searchForm" name='searchForm' onSubmit={handleSearch} action='/searchLogin' method='POST' className='searchForm'>
+        
+        <label htmlFor='Search'>Search: </label>
+        <input id='word' type='text' name='searchTerm' placeholder='SEARCH' />
+        <input type='hidden' name='_csrf' value={props.csrf} />
+        <input className='searchSubmit' type='submit' value='Search' />
+        
+        </form>
+    );
+};
+
+const SearchList = function(props) {
+    if(props.search.length === 0) {
+        return (
+        <div className='searchList'>
+            <h3 className='emptySearch'>No Match Article</h3>
+            </div>
+        )
+    };
+
+    const searchNodes = props.search.map(function(search) {
+        let temp = search.text.split(/\n/);
+        const line = temp.map(function(t) {
+            return(
+            <div>
+                <p className='searchText'>{t}</p>
+            </div>
+            );
+        });
+        return (
+        <div key={search._id} className='search'>
+                <img className='domoRelate' src={search.relate} />
+                <div id='g1'>
+                <h3 classNAme='domoName'><b>{search.name}</b></h3>
+                    {line}
+                    </div>
+                
+            </div>
+
+        );
+    });
+
+    return (
+    <div className='searchList'>{searchNodes}</div>
+    );
+    };
+
+const loadExploreFromServer = (csrf) => {
+    sendAjax('GET', '/getExplore', null, (data) => {
+        console.log(data);
+        ReactDOM.render(
+            <div><h1>Highlight Of The Day</h1>
+        <ExploreList csrf={csrf} explores={data.domos} />
+            </div>, document.querySelector('#content')
+        );
+        ReactDOM.render(
+            <ChangeContentWindow csrf={csrf} />,
+        document.querySelector('#createContext')
+    );
+            ReactDOM.render(
+    <ChangeContentWindow csrf={csrf} />,
+        document.querySelector('#errorMessage')
+    );
+        
+    });
+};
+
 const createLoginWindow = (csrf) => {
     ReactDOM.render(
-    <LoginWindow csrf={csrf} />,
+        <div><h1>SignIn</h1>
+    <LoginWindow csrf={csrf} />
+            </div>,
         document.querySelector('#content')
+    );
+        ReactDOM.render(
+    <ChangeContentWindow csrf={csrf} />,
+        document.querySelector('#createContext')
+    );
+                ReactDOM.render(
+    <ChangeContentWindow csrf={csrf} />,
+        document.querySelector('#errorMessage')
     );
     
 };
 
 const createSignupWindow = (csrf) => {
     ReactDOM.render(
-    <SignupWindow csrf={csrf} />,
+        <div><h1>Let's Get Started</h1>
+    <SignupWindow csrf={csrf} />
+        </div>,
         document.querySelector('#content')
+    );
+        ReactDOM.render(
+    <ChangeContentWindow csrf={csrf} />,
+        document.querySelector('#createContext')
+    );
+                ReactDOM.render(
+    <ChangeContentWindow csrf={csrf} />,
+        document.querySelector('#errorMessage')
+    );
+    
+};
+
+const createSearchWindow = (csrf) => {
+    ReactDOM.render(
+    <SearchWindow csrf={csrf} />,
+        document.querySelector('#content')
+    );
+        ReactDOM.render(
+    <ChangeContentWindow csrf={csrf} />,
+        document.querySelector('#createContext')
+    );
+    ReactDOM.render(
+    <ChangeContentWindow csrf={csrf} />,
+        document.querySelector('#errorMessage')
     );
     
 };
 
 const setup = (csrf) => {
+    
     const loginButton = document.querySelector('#loginButton');
 
     const signupButton = document.querySelector('#signupButton');
+    
+    const exploreButton = document.querySelector('#exploreButton');
+    
+    const searchButton = document.querySelector('#searchButton');
     
     signupButton.addEventListener('click',(e) =>{
         e.preventDefault();
@@ -102,9 +269,20 @@ const setup = (csrf) => {
         createLoginWindow(csrf);
         return false;
     });
-
+    exploreButton.addEventListener('click',(e) => {
+        e.preventDefault();
+        loadExploreFromServer(csrf);
+        return false;
+    });
+    searchButton.addEventListener('click',(e) => {
+        e.preventDefault();
+        createSearchWindow(csrf);
+        return false;
+    });
     
-    createLoginWindow(csrf);
+    getcsrfValue = csrf;
+    loadExploreFromServer(csrf);
+    //createLoginWindow(csrf);
 };
 
 

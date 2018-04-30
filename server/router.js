@@ -14,10 +14,14 @@ const router = (app) => {
 
   app.post('/changePass', mid.requiresLogin, controllers.Account.changePass);
 
-  app.get('/getExplore', mid.requiresLogin, controllers.Domo.getAll);
+  app.get('/getExplore', mid.requiresSecure, mid.requiresLogout, controllers.Domo.getAll);
+  app.get('/loginExplore', mid.requiresLogin, controllers.Domo.getAll);
   app.get('/explore', mid.requiresLogin, controllers.Domo.makerPage);
   app.post('/explore', mid.requiresLogin, controllers.Domo.make);
-
+  app.get('/loginSearch', mid.requiresLogin, controllers.Domo.searchDomos);
+    
+  app.post('/search', mid.requiresLogin, controllers.Domo.searchDomos);
+  app.post('/searchLogin', mid.requiresSecure, mid.requiresLogout, controllers.Domo.searchDomos);
   app.get('/', mid.requiresSecure, mid.requiresLogout, controllers.Account.loginPage);
 };
 

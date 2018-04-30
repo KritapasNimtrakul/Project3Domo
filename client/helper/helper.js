@@ -1,11 +1,11 @@
 const handleError = (message) => {
   $('#errorMessage').text(message);
-  $('#domoMessage').animate({ width: 'toggle' }, 350);
+  $('#domoMessage').animate({ width: 'show' }, 350);
 };
 
 const redirect = (response) => {
-  $('#domoMessage').animate({ width: 'hide' }, 350);
   window.location = response.redirect;
+  $('#domoMessage').animate({ width: 'hide' }, 350);
 };
 
 const sendAjax = (type, action, data, success) => {

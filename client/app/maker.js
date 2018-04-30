@@ -49,7 +49,18 @@ const ChangePassWindow = (props) => {
 
 const UpgradeWindow = (props) => {
     return (
-        <div>Coming Soon TM</div>
+        <div>
+        <h1>Benefits: </h1>
+            <ul>
+                <li>Appear in the front page of our website more often</li>
+                <li>Have access to custom CSS modification/ Available Template</li>
+                <li>Higher chance of appearing at the top of our search query</li>
+                <li>Ability to favorite and support other writer</li>
+                <li>Ability to collab works with other writer</li>
+                <li>Gain credit to purchase stuff in our website</li>
+                
+            </ul>
+        </div>
     );
 };
 
@@ -106,6 +117,7 @@ const handleDomo = (e) => {
     
     sendAjax('POST', $('#postForm').attr('action'), $('#postForm').serialize(), function(){
         loadDomosFromServer($('#postForm')[0][3].value);
+        
     });
     return false;
 };
@@ -115,7 +127,7 @@ const DomoForm = (props) => {
     return (
         <div>
             <form id='postForm' onSubmit={handleDomo} name='postForm' action='/maker' method='POST' className='postForm' >
-              <input id="domoName" type="text" name="name" size="55" placeholder="TITLE"/>
+              <input id="domoName" type="text" name="name" size="55" placeholder="New Story"/>
         <div>    
         <textarea id="domoText" rows="25" cols="104" maxlength="500" name="text" placeholder="Story Time"></textarea>
             </div>
@@ -161,11 +173,21 @@ const DomoList = function(props) {
 
     const domoNodes = props.domos.map(function(domo) {
         let temp = domo.text.split(/\n/);
+        
+        const line = temp.map(function(t) {
+            return(
+            <div>
+                <p className='domoText'>{t}</p>
+            </div>
+            );
+        });
         return (
         <div key={domo._id} className='domo'>
-                <h3 classNAme='domoName'><b>{domo.name}</b></h3>
-                    <p className='domoText'>{temp}</p>
                 <img className='domoRelate' src={domo.relate} />
+                <div id='g1'>
+                <h3 classNAme='domoName'><b>{domo.name}</b></h3>
+                    {line}
+                
 
                 <form id='deleteForm' onSubmit={deleteDomo} name='deleteForm' action='/deleteDomo' method='POST' className='deleteForm' >
                 <input type='hidden' name='name' value={domo.name} />
@@ -175,6 +197,7 @@ const DomoList = function(props) {
                 <input className='deleteFormSubmit' type='submit' value='Delete' />
 
                 </form>
+                    </div>
             </div>
 
         );
@@ -197,11 +220,20 @@ const ExploreList = function(props) {
 
     const domoNodes = props.explores.map(function(domo) {
         let temp = domo.text.split(/\n/);
+        const line = temp.map(function(t) {
+            return(
+            <div>
+                <p className='domoText'>{t}</p>
+            </div>
+            );
+        });
         return (
         <div key={domo._id} className='domo'>
-                <h3 classNAme='domoName'><b>{domo.name}</b></h3>
-                    <p className='domoText'>{temp}</p>
                 <img className='domoRelate' src={domo.relate} />
+                <div id='g1'>
+                <h3 classNAme='domoName'><b>{domo.name}</b></h3>
+                    {line}
+                </div>
             </div>
 
         );
@@ -211,6 +243,72 @@ const ExploreList = function(props) {
     <div className='domoList'>{domoNodes}</div>
     );
     };
+
+const handleSearch = (e) => {
+  e.preventDefault();
+
+  if ($('#word').val() == '') {
+    handleError('All fields are required');
+    return false;
+  }
+    
+    sendAjax('POST', $("#searchForm").attr("action"), $("#searchForm").serialize(), (data) => {
+        console.log(data);
+        ReactDOM.render(
+        <SearchList csrf={getcsrfValue} search={data.domos} />, document.querySelector('#createContext')
+        );
+    });
+    
+    return false;
+};
+
+const SearchList = function(props) {
+    if(props.search.length === 0) {
+        return (
+        <div className='searchList'>
+            <h3 className='emptySearch'>No Match Article</h3>
+            </div>
+        )
+    };
+
+    const searchNodes = props.search.map(function(search) {
+        let temp = search.text.split(/\n/);
+        const line = temp.map(function(t) {
+            return(
+            <div>
+                <p className='searchText'>{t}</p>
+            </div>
+            );
+        });
+        return (
+        <div key={search._id} className='search'>
+               <img className='domoRelate' src={search.relate} />
+                <div id='g1'>
+                <h3 classNAme='domoName'><b>{search.name}</b></h3>
+                    {line}
+                    </div>
+            </div>
+
+        );
+    });
+
+    return (
+    <div className='searchList'>{searchNodes}</div>
+    );
+    };
+
+const SearchWindow = (props) => {
+    return(
+    <form id="searchForm" name='searchForm' onSubmit={handleSearch} action='/search' method='POST' className='searchForm'>
+        
+        <label htmlFor='Search'>Search: </label>
+        <input id='word' type='text' name='searchTerm' placeholder='SEARCH' />
+        <input type='hidden' name='_csrf' value={props.csrf} />
+        <input className='searchSubmit' type='submit' value='Search' />
+        
+        </form>
+    );
+};
 
 
 const loadDomosFromServer = (csrf) => {
@@ -223,13 +321,29 @@ const loadDomosFromServer = (csrf) => {
 };
 
 const loadExploreFromServer = (csrf) => {
-    sendAjax('GET', '/getExplore', null, (data) => {
+    sendAjax('GET', '/loginExplore', null, (data) => {
         console.log(data);
         ReactDOM.render(
         <ExploreList csrf={csrf} explores={data.domos} />, document.querySelector('#createContext')
         );
+        ReactDOM.render(
+    <ChangeContentWindow csrf={csrf} />,
+        document.querySelector('#createCss')
+    );
         
     });
+};
+
+const createSearchWindow = (csrf) => {
+    ReactDOM.render(
+    <SearchWindow csrf={csrf} />,
+        document.querySelector('#createCss')
+    );
+    ReactDOM.render(
+    <ChangeContentWindow csrf={csrf} />,
+        document.querySelector('#createContext')
+    );
+    
 };
 
 const setup = function(csrf) {
@@ -255,8 +369,24 @@ const setup = function(csrf) {
         loadDomosFromServer(csrf);
         return false;
     });
+    
+    const exploreButton = document.querySelector('#exploreButton');
+    exploreButton.addEventListener('click',(e) => {
+        e.preventDefault();
+        loadExploreFromServer(csrf);
+        return false;
+    });
+    
+    const searchButton = document.querySelector('#searchButton');
+    searchButton.addEventListener('click',(e) => {
+        e.preventDefault();
+        createSearchWindow(csrf);
+        return false;
+    });
+    
     getcsrfValue = csrf;
     loadExploreFromServer(csrf);
+    createSearchWindow(csrf);
     
 };
 

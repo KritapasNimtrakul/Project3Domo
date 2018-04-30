@@ -41,11 +41,17 @@ const changePass = (request, response) => {
   const username = req.session.account.username;
   const password = `${req.body.pass}`;
   const password2 = `${req.body.newPass}`;
+  const repassword = `${req.body.newPass2}`;
 
 
   if (!password2 || !password) {
     return res.status(400).json({ error: 'RAWR! All fields are required' });
   }
+    
+  if (repassword != password2) {
+    return res.status(400).json({ error: 'Password does not match' });
+  }
+    
 
 
   const accountPromise = Account.AccountModel.changeUserPassword(username, password, password2);

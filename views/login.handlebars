@@ -9,14 +9,26 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.2.0/jquery.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/remarkable/1.6.2/remarkable.min.js"></script>
   <link rel="shortcut icon" href="/assets/img/favicon.png"/>
+   <link href="https://fonts.googleapis.com/css?family=Cinzel" rel="stylesheet">
   <link rel="stylesheet" type="text/css" href="/assets/style.css"/>
 </head>
-<body> 
-  <nav><a href="/login"></a>
-    <div class="navlink"><a id="loginButton" href="/login">Login</a></div>
-    <div class="navlink"><a id="signupButton" href="/signup">Sign up</a></div>
+<body>
+    <p style='visibility:hidden;font-family: Cinzel, serif;'>aaaa</p>
+     <h1>Welcome</h1>
+    <hr>
+  <nav id='navigation'>   
+      <div class="navlink1">
+          <div id='no1'><a id="exploreButton" href="/getExplore">Explore</a></div>
+          <div id='no2'><a id="searchButton" href="/searchbar">Search</a></div>
+          <div id='no3'><a id="loginButton" href="/login">SignIn</a></div>
+          <div id='no4'><a id="signupButton" href="/signup">Sign up</a></div>
+      </div>
   </nav>
+    <hr>
   <section id="content"></section>
+    <section id='createContext'>
+        
+    </section>
   <div id="domoMessage">
     <h3><span id="errorMessage">Wrong username or password</span></h3>
   </div>

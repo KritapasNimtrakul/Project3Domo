@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+const textSearch = require('mongoose-text-search');
 mongoose.Promise = global.Promise;
 const _ = require('underscore');
 
@@ -34,6 +35,11 @@ const DomoSchema = new mongoose.Schema({
     default: Date.now,
   },
 });
+
+DomoSchema.plugin(textSearch);
+
+DomoSchema.index({ name: 'text',text: 'text' });
+
 
 DomoSchema.statics.toAPI = (doc) => ({
   name: doc.name,
@@ -72,6 +78,14 @@ DomoModel.find().select('name text relate').exec(callback);
   // console.log(names);
   return names;
   */
+
+DomoSchema.statics.searchQuery = (word, callback) => {
+const search = {
+    $text: {$search: word}
+}
+//console.log(DomoModel.find(search));
+return DomoModel.find(search).exec(callback);
+};
 
 
 DomoModel = mongoose.model('Domo', DomoSchema);

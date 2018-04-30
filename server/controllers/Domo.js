@@ -56,6 +56,7 @@ const getDomos = (request, response) => {
     return res.json({ domos: docs });
   });
 };
+
 const getAll = (request, response) => {
   const res = response;
 
@@ -90,8 +91,26 @@ const deleteDomos = (req, res) => {
   return domoPromise;
 };
 
+const searchDomos = (req, res) => {
+    
+  if (!req.body) {
+    return res.status(400).json({ error: 'No Search Term' });
+  }
+  console.log(req.body.searchTerm);
+    
+    return Domo.DomoModel.searchQuery(req.body.searchTerm,(err, docs) => {
+    if (err) {
+      console.log(err);
+      return res.status(400).json({ error: 'An error occured' });
+    }
+    console.log(docs);
+    return res.json({ domos: docs });
+  });
+};
+
 module.exports.makerPage = makerPage;
 module.exports.getDomos = getDomos;
 module.exports.make = makeDomo;
 module.exports.deleteDomos = deleteDomos;
 module.exports.getAll = getAll;
+module.exports.searchDomos = searchDomos;

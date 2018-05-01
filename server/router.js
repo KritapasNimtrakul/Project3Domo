@@ -19,9 +19,12 @@ const router = (app) => {
   app.get('/explore', mid.requiresLogin, controllers.Domo.makerPage);
   app.post('/explore', mid.requiresLogin, controllers.Domo.make);
   app.get('/loginSearch', mid.requiresLogin, controllers.Domo.searchDomos);
-    
+
   app.post('/search', mid.requiresLogin, controllers.Domo.searchDomos);
   app.post('/searchLogin', mid.requiresSecure, mid.requiresLogout, controllers.Domo.searchDomos);
+  app.post('/read', mid.requiresSecure, mid.requiresLogout, controllers.Domo.readDomos);
+  app.post('/readLogin', mid.requiresLogin, controllers.Domo.readDomos);
+
   app.get('/', mid.requiresSecure, mid.requiresLogout, controllers.Account.loginPage);
 };
 

@@ -38,7 +38,7 @@ const DomoSchema = new mongoose.Schema({
 
 DomoSchema.plugin(textSearch);
 
-DomoSchema.index({ name: 'text',text: 'text' });
+DomoSchema.index({ name: 'text', text: 'text' });
 
 
 DomoSchema.statics.toAPI = (doc) => ({
@@ -62,8 +62,17 @@ DomoSchema.statics.removeDomo = (dname, dtext, callback) => {
   return DomoModel.remove(search).exec(callback);
 };
 
+DomoSchema.statics.readQuery = (dname, dtext, callback) => {
+  const search = {
+    name: dname,
+    $text: { $search: dtext },
+  };
+  return DomoModel.find(search).exec(callback);
+};
+
 DomoSchema.statics.getAllCollection = (callback) =>
-DomoModel.find().select('name text relate').exec(callback);
+DomoModel.find().select('name text relate').limit(9)
+    .exec(callback);
     /*
   const collections = mongoose.connections[0].collections;
   //console.log(collections);
@@ -80,11 +89,11 @@ DomoModel.find().select('name text relate').exec(callback);
   */
 
 DomoSchema.statics.searchQuery = (word, callback) => {
-const search = {
-    $text: {$search: word}
-}
-//console.log(DomoModel.find(search));
-return DomoModel.find(search).exec(callback);
+  const search = {
+    $text: { $search: word },
+  };
+// console.log(DomoModel.find(search));
+  return DomoModel.find(search).exec(callback);
 };
 
 

@@ -92,13 +92,28 @@ const deleteDomos = (req, res) => {
 };
 
 const searchDomos = (req, res) => {
-    
   if (!req.body) {
     return res.status(400).json({ error: 'No Search Term' });
   }
   console.log(req.body.searchTerm);
-    
-    return Domo.DomoModel.searchQuery(req.body.searchTerm,(err, docs) => {
+
+  return Domo.DomoModel.searchQuery(req.body.searchTerm, (err, docs) => {
+    if (err) {
+      console.log(err);
+      return res.status(400).json({ error: 'An error occured' });
+    }
+    console.log(docs);
+    return res.json({ domos: docs });
+  });
+};
+
+const readDomos = (req, res) => {
+  if (!req.body) {
+    return res.status(400).json({ error: 'No Search Term' });
+  }
+  console.log(req.body);
+
+  return Domo.DomoModel.readQuery(req.body.name, req.body.text, (err, docs) => {
     if (err) {
       console.log(err);
       return res.status(400).json({ error: 'An error occured' });
@@ -114,3 +129,4 @@ module.exports.make = makeDomo;
 module.exports.deleteDomos = deleteDomos;
 module.exports.getAll = getAll;
 module.exports.searchDomos = searchDomos;
+module.exports.readDomos = readDomos;

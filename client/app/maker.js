@@ -162,6 +162,23 @@ const deleteDomo = (e) => {
     return false;
 };
 
+const readDomo = (e) => {
+  e.preventDefault();
+    
+    sendAjax('POST', $("#readForm").attr("action"), 'name='+e.target.name.value+'&text='+e.target.text.value+'&_csrf='+e.target._csrf.value, (data) => {
+        console.log(data);
+        ReactDOM.render(
+        <ReadList csrf={getcsrfValue} search={data.domos} />, document.querySelector('#createCSS')
+        );
+            ReactDOM.render(
+    <ChangeContentWindow csrf={getcsrfValue} />,
+        document.querySelector('#createContext')
+    );
+    });
+    
+    return false;
+};
+
 const DomoList = function(props) {
     if(props.domos.length === 0) {
         return (
@@ -172,6 +189,8 @@ const DomoList = function(props) {
     };
 
     const domoNodes = props.domos.map(function(domo) {
+        domo.text = domo.text.substring(0,50);
+        console.dir(domo.text);
         let temp = domo.text.split(/\n/);
         
         const line = temp.map(function(t) {
@@ -219,6 +238,7 @@ const ExploreList = function(props) {
     };
 
     const domoNodes = props.explores.map(function(domo) {
+        domo.text = domo.text.substring(0,50);
         let temp = domo.text.split(/\n/);
         const line = temp.map(function(t) {
             return(
@@ -233,7 +253,16 @@ const ExploreList = function(props) {
                 <div id='g1'>
                 <h3 classNAme='domoName'><b>{domo.name}</b></h3>
                     {line}
+                <form id='readForm' onSubmit={readDomo} name='readForm' action='/readLogin' method='POST' className='readForm' >
+                <input type='hidden' name='name' value={domo.name} />
+                <input type='hidden' name='text' value={domo.text} />
+
+                <input type='hidden' name='_csrf' value={getcsrfValue} />
+                <input className='readFormSubmit' type='submit' value='Read More . . . ' />
+
+                </form>
                 </div>
+                
             </div>
 
         );
@@ -241,6 +270,43 @@ const ExploreList = function(props) {
 
     return (
     <div className='domoList'>{domoNodes}</div>
+    );
+    };
+
+const ReadList = function(props) {
+    if(props.search.length === 0) {
+        return (
+        <div className='searchList'>
+            <h3 className='emptySearch'>No Match Article</h3>
+            </div>
+        )
+    };
+
+    const readNodes = props.search.map(function(read) {
+        let temp = read.text.split(/\n/);
+        const line = temp.map(function(t) {
+            return(
+            <div>
+                <p className='readText'>{t}</p>
+            </div>
+            );
+        });
+        return (
+        <div key={read._id} className='read'>
+                <img className='readRelate' src={read.relate} />
+                <div id='g1'>
+                <h3 className='readName'><b>{read.name}</b></h3>
+                    
+                    {line}
+                    </div>
+                
+            </div>
+
+        );
+    });
+
+    return (
+    <div className='ReadList'>{readNodes}</div>
     );
     };
 

@@ -183,6 +183,18 @@ var deleteDomo = function deleteDomo(e) {
     return false;
 };
 
+var readDomo = function readDomo(e) {
+    e.preventDefault();
+
+    sendAjax('POST', $("#readForm").attr("action"), 'name=' + e.target.name.value + '&text=' + e.target.text.value + '&_csrf=' + e.target._csrf.value, function (data) {
+        console.log(data);
+        ReactDOM.render(React.createElement(ReadList, { csrf: getcsrfValue, search: data.domos }), document.querySelector('#createCSS'));
+        ReactDOM.render(React.createElement(ChangeContentWindow, { csrf: getcsrfValue }), document.querySelector('#createContext'));
+    });
+
+    return false;
+};
+
 var DomoList = function DomoList(props) {
     if (props.domos.length === 0) {
         return React.createElement(
@@ -197,6 +209,8 @@ var DomoList = function DomoList(props) {
     };
 
     var domoNodes = props.domos.map(function (domo) {
+        domo.text = domo.text.substring(0, 50);
+        console.dir(domo.text);
         var temp = domo.text.split(/\n/);
 
         var line = temp.map(function (t) {
@@ -260,6 +274,7 @@ var ExploreList = function ExploreList(props) {
     };
 
     var domoNodes = props.explores.map(function (domo) {
+        domo.text = domo.text.substring(0, 50);
         var temp = domo.text.split(/\n/);
         var line = temp.map(function (t) {
             return React.createElement(
@@ -288,7 +303,15 @@ var ExploreList = function ExploreList(props) {
                         domo.name
                     )
                 ),
-                line
+                line,
+                React.createElement(
+                    'form',
+                    { id: 'readForm', onSubmit: readDomo, name: 'readForm', action: '/readLogin', method: 'POST', className: 'readForm' },
+                    React.createElement('input', { type: 'hidden', name: 'name', value: domo.name }),
+                    React.createElement('input', { type: 'hidden', name: 'text', value: domo.text }),
+                    React.createElement('input', { type: 'hidden', name: '_csrf', value: getcsrfValue }),
+                    React.createElement('input', { className: 'readFormSubmit', type: 'submit', value: 'Read More . . . ' })
+                )
             )
         );
     });
@@ -297,6 +320,60 @@ var ExploreList = function ExploreList(props) {
         'div',
         { className: 'domoList' },
         domoNodes
+    );
+};
+
+var ReadList = function ReadList(props) {
+    if (props.search.length === 0) {
+        return React.createElement(
+            'div',
+            { className: 'searchList' },
+            React.createElement(
+                'h3',
+                { className: 'emptySearch' },
+                'No Match Article'
+            )
+        );
+    };
+
+    var readNodes = props.search.map(function (read) {
+        var temp = read.text.split(/\n/);
+        var line = temp.map(function (t) {
+            return React.createElement(
+                'div',
+                null,
+                React.createElement(
+                    'p',
+                    { className: 'readText' },
+                    t
+                )
+            );
+        });
+        return React.createElement(
+            'div',
+            { key: read._id, className: 'read' },
+            React.createElement('img', { className: 'readRelate', src: read.relate }),
+            React.createElement(
+                'div',
+                { id: 'g1' },
+                React.createElement(
+                    'h3',
+                    { className: 'readName' },
+                    React.createElement(
+                        'b',
+                        null,
+                        read.name
+                    )
+                ),
+                line
+            )
+        );
+    });
+
+    return React.createElement(
+        'div',
+        { className: 'ReadList' },
+        readNodes
     );
 };
 
